@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #111, #000);
+            color: white;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Main Box */
+        .box {
+            width: 90%;
+            max-width: 380px;
+            padding: 32px 26px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 18px;
+            box-shadow: 0 0 30px rgba(0,229,255,0.35);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Heading */
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #00e5ff;
+            text-shadow: 0 0 12px #00e5ff;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        /* Inputs */
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,229,255,0.4);
+            background: rgba(0,0,0,0.35);
+            color: white;
+            margin-top: 14px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 10px rgba(0,229,255,0.6);
+        }
+
+        /* Password / Confirm Password Container */
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding-right: 48px;
+        }
+
+        /* Eye Icon */
+        .toggle-eye {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            cursor: pointer;
+            color: #00e5ff;
+            text-shadow: 0 0 10px #00e5ff;
+            transition: 0.2s ease-in-out;
+        }
+
+        .toggle-eye:hover {
+            color: white;
+            text-shadow: 0 0 15px #00e5ff, 0 0 30px #00e5ff;
+        }
+
+        /* Register Button */
+        button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 13px;
+            background: linear-gradient(135deg, #007bff, #00c3ff);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0,229,255,0.5);
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 38px rgba(0,229,255,0.9);
+        }
+
+        /* Text at bottom */
+        .small-text {
+            text-align: center;
+            margin-top: 18px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .small-text a {
+            color: #00e5ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Mobile Friendly */
+        @media (max-height: 650px) {
+            body {
+                align-items: flex-start;
+                padding-top: 40px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>Create Account</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="full_name" placeholder="Full Name" required />
+
+        <input type="email" name="email" placeholder="Email" required />
+
+        <input type="text" name="phone" placeholder="Phone Number" required />
+
+        <!-- Password with Eye Icon -->
+        <div class="input-group">
+            <input id="password" type="password" name="password" placeholder="Password" required />
+            <span class="toggle-eye" onclick="toggleEye('password', this)">👁</span>
+        </div>
+
+        <div class="input-group">
+            <input id="cpassword" type="password" name="cpassword" placeholder="Confirm Password" required />
+            <span class="toggle-eye" onclick="toggleEye('cpassword', this)">👁</span>
+        </div>
+
+        <button type="submit">Register</button>
+
+        <p class="small-text">
+            Already registered? <a href="{% url 'login' %}">Login</a>
+        </p>
+    </form>
+</div>
+
+<script>
+function toggleEye(id, icon) {
+    const field = document.getElementById(id);
+
+    if (field.type === "password") {
+        field.type = "text";
+        icon.textContent = "🙈";
+    } else {
+        field.type = "password";
+        icon.textContent = "👁";
+    }
+}
+</script>
+
+</body>
+</html>

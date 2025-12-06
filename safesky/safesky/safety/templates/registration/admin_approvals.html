@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pending Approvals</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            background: #0d0d0d;
+            color: white;
+            padding: 40px;
+        }
+        h1 {
+            color: #00e5ff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .box {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 12px;
+            width: 420px;
+            margin: 0 auto;
+        }
+        .item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Pending User Approvals</h1>
+
+<div class="box">
+    {% if pending %}
+        {% for p in pending %}
+            <div class="item">
+                <strong>{{ p.user.first_name }}</strong><br>
+                {{ p.user.username }}<br>
+                {{ p.phone }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No pending approval requests.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeSky SOS</title>
+    <link rel="stylesheet" href="{% static 'safety/sos.css' %}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #111, #000);
+            color: white;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            color: #ff2e63;
+            text-shadow: 0 0 10px #ff2e63, 0 0 25px rgba(255,46,99,0.6);
+            letter-spacing: 2px;
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { text-shadow: 0 0 10px #ff2e63; }
+            to { text-shadow: 0 0 30px #ff2e63, 0 0 50px rgba(255,46,99,0.8); }
+        }
+
+        .sos-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 85%;
+            max-width: 350px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .sos-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        .sos-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.15);
+            transform: rotate(45deg);
+            z-index: 0;
+            transition: 0.6s;
+        }
+
+        .sos-btn:hover::before {
+            top: -20%;
+            left: -20%;
+        }
+
+        .sos-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255,255,255,0.3);
+        }
+
+        .police { background: linear-gradient(135deg, #0044ff, #007bff); }
+        .fire { background: linear-gradient(135deg, #ff3c00, #ff6f00); }
+        .medical { background: linear-gradient(135deg, #00c851, #009e2f); }
+        .women-safety { background: linear-gradient(135deg, #ff007f, #ff3399); }
+
+        .sos-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 0 35px white;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Small pulse animation background effect */
+        .pulse-ring {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(255,46,99,0.6);
+            border-radius: 50%;
+            animation: pulseRing 2s infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="pulse-ring"></div>
+    <h1>🚨 SOS Emergency Hub</h1>
+
+    <div class="sos-options">
+        <a href="tel:100"><button class="sos-btn police">👮 Police</button></a>
+        <a href="tel:101"><button class="sos-btn fire">🔥 Fire</button></a>
+        <a href="tel:102"><button class="sos-btn medical">🏥 Medical</button></a>
+        <a href="tel:1091"><button class="sos-btn women-safety">👩‍🦰 Women Safety</button></a>
+    </div>
+
+    <footer>SafeSky © 2025 | Tap a button to initiate a call</footer>
+
+    <script>
+        // Show alert before calling (optional)
+        document.querySelectorAll('.sos-options a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const btn = e.currentTarget.querySelector('button').innerText;
+                alert(`🚨 ${btn} Call initiated!`);
+            });
+        });
+    </script>
+</body>
+</html>

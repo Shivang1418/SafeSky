@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f7;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #2196F3;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.contacts-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+}
+
+.contact-card {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.contact-card:hover {
+    transform: translateY(-3px);
+    background-color: #e3f2fd;
+}
+
+.contact-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.contact-status {
+    font-size: 14px;
+    color: gray;
+}

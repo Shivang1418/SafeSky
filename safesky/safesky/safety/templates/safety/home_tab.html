@@ -1,0 +1,571 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SafeSky Home</title>
+  <link rel="stylesheet" href="{% static 'safety/home_tab.css' %}" />
+  <!-- ✅ CSRF token exposed via meta for JS -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #111, #000);
+      color: white;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.5);
+      color: #00e5ff;
+      text-align: center;
+      padding: 25px 15px;
+      font-size: 2em;
+      font-weight: 800;
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      text-shadow: 0 0 20px #00e5ff;
+      letter-spacing: 2px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #00e5ff;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid rgba(0, 229, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-shadow: 0 0 15px #00e5ff;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .tracker, .access-section, .feedback-section, .faq-section {
+      background: rgba(0, 20, 40, 0.6);
+      padding: 25px;
+      margin-top: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 229, 255, 0.15);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+    }
+
+    #member-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 20px 5px;
+    }
+
+    .member-card {
+      flex: 0 0 280px;
+      background: rgba(0, 30, 60, 0.7);
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+      padding: 20px;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(0, 229, 255, 0.3);
+    }
+
+    .member-card:hover {
+      transform: translateY(-5px);
+      border-color: #00e5ff;
+    }
+
+    .member-info h3 {
+      color: #00e5ff;
+      font-size: 1.4em;
+      margin-bottom: 12px;
+    }
+
+    .member-info p {
+      margin: 8px 0;
+      font-size: 0.95em;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status.granted {
+      background: linear-gradient(135deg, #00ff88, #00cc6a);
+      color: #003320;
+    }
+
+    .status.pending {
+      background: linear-gradient(135deg, #ffaa00, #ff8800);
+      color: #331a00;
+    }
+
+    .status.denied {
+      background: linear-gradient(135deg, #ff2e63, #ff0055);
+      color: #330011;
+    }
+
+    .track-btn {
+      background: linear-gradient(135deg, #007bff, #00b4ff);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      margin-top: 12px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .track-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 180, 255, 0.5);
+    }
+
+    .track-btn:disabled {
+      background: rgba(100, 100, 100, 0.5);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ff9800, #ff6f00);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(255, 152, 0, 0.5);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #generated-code {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 1.3em;
+      color: #00e5ff;
+      background: rgba(0, 229, 255, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #00e5ff;
+      text-shadow: 0 0 10px #00e5ff;
+    }
+
+    .request-block {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .request-block input {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid rgba(0, 229, 255, 0.3);
+      background: rgba(0, 30, 60, 0.5);
+      color: white;
+      font-size: 0.95em;
+    }
+
+    .request-block input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .request-block input:focus {
+      outline: none;
+      border-color: #00e5ff;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    }
+
+    #send-request-btn {
+      background: linear-gradient(135deg, #007bff, #00b4ff);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid rgba(0, 229, 255, 0.3);
+      background: rgba(0, 30, 60, 0.5);
+      color: white;
+      font-family: inherit;
+      font-size: 0.95em;
+      resize: vertical;
+    }
+
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #00e5ff;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+    }
+
+    details {
+      margin-top: 15px;
+      border: 2px solid rgba(0, 229, 255, 0.3);
+      padding: 15px 20px;
+      border-radius: 12px;
+      background: rgba(0, 30, 60, 0.5);
+      cursor: pointer;
+    }
+
+    details:hover {
+      border-color: #00e5ff;
+    }
+
+    summary {
+      font-weight: 600;
+      color: #00e5ff;
+      font-size: 1.05em;
+      cursor: pointer;
+    }
+
+    details p {
+      margin-top: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      padding-left: 10px;
+      border-left: 3px solid #00e5ff;
+    }
+
+    small {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      header { font-size: 1.5em; }
+      h2 { font-size: 1.4em; }
+      .member-card { flex: 0 0 240px; }
+      .request-block { flex-direction: column; }
+    }
+</style>
+
+</head>
+
+<body>
+<header>SafeSky Global Tracker 🌐</header>
+
+<div class="container">
+  <div class="tracker" id="tracker-section">
+    <h2>Family Members 👨‍👩‍👧‍👦</h2>
+    <div id="member-list">Loading members...</div>
+  </div>
+
+  <div class="access-section">
+    <h2>Manage Access 🔐</h2>
+    <div>
+      <button id="generate-code-btn">Generate One-Time Code</button>
+      <div id="generated-code" style="margin-top:8px; font-weight:bold;"></div>
+      <small>Codes expire in 10 minutes.</small>
+    </div>
+
+    <div class="request-block" style="margin-top:12px;">
+      <input id="otp-input" type="text" placeholder="Enter one-time code" />
+      <input id="recipient-email" type="email" placeholder="Enter family member email" />
+      <button id="send-request-btn">Send Permission Request</button>
+    </div>
+
+    <div id="access-message" class="success-message"></div>
+    <div id="access-error" class="error-message"></div>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="feedback-section">
+    <h2>💬 Feedback</h2>
+    <p>Your thoughts help us make SafeSky better for everyone.</p>
+    <textarea id="feedback-text" placeholder="Share your experience..."></textarea><br />
+    <button id="submit-feedback">Submit Feedback</button>
+    <div id="feedback-response" class="success-message"></div>
+  </div>
+
+  <div class="faq-section">
+    <h2>❓ Frequently Asked Questions</h2>
+    <details>
+      <summary>How does location sharing work?</summary>
+      <p>Once permission is granted, SafeSky uses browser geolocation and Google Maps API to update the member’s position securely.</p>
+    </details>
+    <details>
+      <summary>Is my data safe?</summary>
+      <p>Yes, all communication is encrypted and location access can be revoked anytime.</p>
+    </details>
+    <details>
+      <summary>Can I track multiple family members?</summary>
+      <p>Absolutely. The dashboard supports multiple members and real-time updates globally.</p>
+    </details>
+  </div>
+</div>
+
+<script>
+  // ✅ Standard Django cookie reader
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // ✅ Try cookie, meta, then hidden input
+  function getCSRFToken() {
+    const fromCookie = getCookie("csrftoken");
+    if (fromCookie) return fromCookie;
+
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    if (meta && meta.content && meta.content !== "NOTPROVIDED") {
+      return meta.content;
+    }
+
+    const input = document.querySelector('input[name="csrfmiddlewaretoken"]');
+    if (input && input.value) {
+      return input.value;
+    }
+
+    return null;
+  }
+
+  const csrftoken = getCSRFToken();
+
+  async function loadMembers() {
+    try {
+      const res = await fetch("/safety/get-members-status/");
+      const data = await res.json();
+      const container = document.getElementById("member-list");
+      container.innerHTML = "";
+
+      if (!data.members || data.members.length === 0) {
+        container.textContent = "No members found.";
+        return;
+      }
+
+      data.members.forEach(member => {
+        const div = document.createElement("div");
+        div.className = "member-card";
+        const statusClass =
+          member.status === "granted" ? "granted" :
+          member.status === "pending" ? "pending" : "denied";
+
+        div.innerHTML = `
+          <div class="member-info">
+            <h3>${member.name}</h3>
+            <p><strong>Status:</strong> <span class="status ${statusClass}">${member.status_label}</span></p>
+          </div>
+          <button class="track-btn" data-id="${member.id}" ${member.status !== "granted" ? "disabled" : ""}>
+            🚶 Track
+          </button>`;
+        container.appendChild(div);
+      });
+
+      bindTrackButtons();
+    } catch (e) {
+      console.error(e);
+      document.getElementById("member-list").innerText = "Error loading members.";
+    }
+  }
+
+  // ✅ Redirect to dedicated tracking page
+  function bindTrackButtons() {
+    document.querySelectorAll(".track-btn").forEach(btn => {
+      btn.onclick = () => {
+        const memberId = btn.dataset.id;
+        window.location.href = `/safety/track/${memberId}/`;
+      };
+    });
+  }
+
+  // Helper: safely parse JSON or return null
+  async function safeJson(res) {
+    try {
+      const ct = res.headers.get("content-type") || "";
+      if (!ct.includes("application/json")) return null;
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  }
+
+document.getElementById("generate-code-btn").onclick = async (e) => {
+    if (!csrftoken) {
+        alert("CSRF token not found. Please refresh the page.");
+        return;
+    }
+
+    const btn = e.target;
+    btn.disabled = true;
+    btn.textContent = "Generating...";
+    document.getElementById("generated-code").textContent = "";
+    document.getElementById("access-error").textContent = "";
+    document.getElementById("access-message").textContent = "";
+
+    try {
+        const res = await fetch("/safety/generate-code/", {
+            method: "POST",
+            headers: { "X-CSRFToken": csrftoken },
+            credentials: "same-origin",
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            document.getElementById("access-error").textContent =
+                json.error || "Error generating code.";
+        } else {
+            // Show code ONLY to user generating it
+            document.getElementById("generated-code").textContent = json.display_code;
+
+            // ❌ Removed this auto-fill:
+            // document.getElementById("otp-input").value = json.display_code;
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error generating code.");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Generate One-Time Code";
+    }
+};
+
+
+  // ✅ Send permission request
+  document.getElementById("send-request-btn").onclick = async (e) => {
+    const code = document.getElementById("otp-input").value.trim();
+    const email = document.getElementById("recipient-email").value.trim();
+    if (!code || !email) {
+      alert("Please fill both fields.");
+      return;
+    }
+
+    if (!csrftoken) {
+      alert("CSRF token not found. Make sure CSRF is enabled and refresh the page.");
+      return;
+    }
+
+    const btn = e.target;
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    document.getElementById("access-message").textContent = "";
+    document.getElementById("access-error").textContent = "";
+
+    try {
+      const res = await fetch("/safety/send-permission/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrftoken,
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ code, recipient_email: email })
+      });
+      const json = await safeJson(res) || {};
+      if (res.ok) {
+        document.getElementById("access-message").textContent = json.message || "Request sent.";
+        document.getElementById("access-error").textContent = "";
+        loadMembers();
+      } else {
+        document.getElementById("access-error").textContent =
+          json.error || (`Failed to send request (status ${res.status}).`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error sending permission request.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Send Permission Request";
+    }
+  };
+
+  // ✅ Feedback submit
+  document.getElementById("submit-feedback").onclick = async () => {
+    const feedback = document.getElementById("feedback-text").value.trim();
+    if (!feedback) {
+      alert("Please write feedback.");
+      return;
+    }
+
+    if (!csrftoken) {
+      alert("CSRF token not found. Make sure CSRF is enabled and refresh the page.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/safety/submit-feedback/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrftoken,
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ feedback })
+      });
+      const data = await safeJson(res) || {};
+      if (res.ok) {
+        document.getElementById("feedback-response").textContent = data.message || "Feedback submitted. Thank you!";
+        document.getElementById("feedback-text").value = "";
+      } else {
+        alert(data.error || (`Error submitting feedback (status ${res.status}).`));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting feedback.");
+    }
+  };
+
+  // Initial load
+  loadMembers();
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcUNdaZGH_lHPKIDPAcBekW6rZ4M-UOIw"></script>
+</body>
+</html>

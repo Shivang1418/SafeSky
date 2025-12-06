@@ -1,0 +1,635 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeSky Weather</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: bgMove 20s linear infinite;
+    }
+
+    @keyframes bgMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      padding: 60px 20px 80px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+    }
+
+    .logo {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff 0%, #a8edea 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+      animation: fadeInDown 0.8s ease-out 0.2s backwards;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Search Box */
+    .search-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      padding: 8px;
+      border-radius: 50px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 16px 24px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      font-weight: 500;
+    }
+
+    .search-box input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .search-box button {
+      padding: 16px 32px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .search-box button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Main Weather Card */
+    .weather-main {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(30px);
+      border-radius: 30px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .weather-left h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .weather-description {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      text-transform: capitalize;
+      margin-bottom: 15px;
+    }
+
+    .temperature {
+      font-size: 5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #a8edea 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .weather-icon {
+      width: 180px;
+      height: 180px;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* Weather Details Grid */
+    .weather-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .detail-card {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 25px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .detail-card:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-5px);
+    }
+
+    .detail-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .detail-label {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 30px;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+    }
+
+    /* Forecast Section */
+    .forecast-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(30px);
+      border-radius: 30px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    .forecast-scroll {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding: 10px 0 20px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .forecast-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .forecast-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .forecast-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    .forecast-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .forecast-card {
+      min-width: 140px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px 15px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .forecast-card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .forecast-time {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      opacity: 0.8;
+    }
+
+    .forecast-card img {
+      width: 70px;
+      height: 70px;
+      margin: 10px 0;
+    }
+
+    .forecast-temp {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .forecast-detail {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin: 5px 0;
+    }
+
+    /* Chart Section */
+    .chart-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(30px);
+      border-radius: 30px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .chart-wrapper {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 25px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      opacity: 0.9;
+    }
+
+    canvas {
+      max-height: 300px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 50px;
+    }
+
+    footer p {
+      opacity: 0.7;
+      font-size: 0.95rem;
+    }
+
+    .error {
+      background: rgba(255, 82, 82, 0.2);
+      border: 1px solid rgba(255, 82, 82, 0.5);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 1.1rem;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 2rem;
+      }
+
+      .temperature {
+        font-size: 3.5rem;
+      }
+
+      .weather-header {
+        text-align: center;
+        justify-content: center;
+      }
+
+      .weather-main, .forecast-section, .chart-section {
+        padding: 25px;
+      }
+
+      .weather-details {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <div class="hero">
+    <h1>
+      <a href="{% url 'safety:home' %}" class="logo">⛅ SafeSky</a>
+    </h1>
+    <p class="tagline">Your Real-Time Weather Companion</p>
+    
+    <div class="search-wrapper">
+      <form method="GET" class="search-box">
+        <input type="text" name="city" placeholder="Search any city worldwide..." value="{{ weather.city }}">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+
+  <main class="container">
+    {% if weather %}
+      {% if weather.error %}
+        <div class="error">{{ weather.error }}</div>
+      {% else %}
+        <!-- Main Weather Card -->
+        <section class="weather-main">
+          <div class="weather-header">
+            <div class="weather-left">
+              <h2>{{ weather.city }}</h2>
+              <p class="weather-description">{{ weather.description }}</p>
+              <div class="temperature">{{ weather.temperature }}°</div>
+            </div>
+            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" alt="weather" class="weather-icon">
+          </div>
+
+          <div class="weather-details">
+            <div class="detail-card">
+              <div class="detail-icon">💧</div>
+              <div class="detail-label">Humidity</div>
+              <div class="detail-value">{{ weather.humidity }}%</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-icon">💨</div>
+              <div class="detail-label">Wind Speed</div>
+              <div class="detail-value">{{ weather.wind_speed }} m/s</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-icon">🧭</div>
+              <div class="detail-label">Wind Direction</div>
+              <div class="detail-value">{{ weather.wind_dir }} ({{ weather.wind_deg }}°)</div>
+
+            </div>
+            <div class="detail-card">
+              <div class="detail-icon">🌫️</div>
+              <div class="detail-label">Air Quality</div>
+              <div class="detail-value">{{ aqi }}</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Forecast Section -->
+        <section class="forecast-section">
+          <h3 class="section-title">16-Hour Forecast</h3>
+          <div class="forecast-scroll">
+            {% for f in forecast %}
+              <div class="forecast-card">
+                <div class="forecast-time">{{ f.time }}</div>
+                <img src="https://openweathermap.org/img/wn/{{ f.icon }}@2x.png" alt="{{ f.desc }}">
+                <div class="forecast-temp">{{ f.temp }}°</div>
+                <div class="forecast-detail">💧 {{ f.humidity }}%</div>
+                <div class="forecast-detail">🌧️ {{ f.rain }}mm</div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="chart-section">
+          <h3 class="section-title">Weather Trends</h3>
+          <div class="charts-grid">
+            <div class="chart-wrapper">
+              <div class="chart-title">🌡️ Temperature Trend</div>
+              <canvas id="tempChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-title">💧 Humidity Levels</div>
+              <canvas id="humidityChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-title">🌧️ Rainfall</div>
+              <canvas id="rainChart"></canvas>
+            </div>
+          </div>
+        </section>
+      {% endif %}
+    {% endif %}
+  </main>
+
+  <footer>
+    <p>© 2025 SafeSky Weather | Powered by OpenWeather API</p>
+  </footer>
+
+  <script>
+    {% if forecast %}
+      const times = {{ times_json|safe }};
+      const temps = {{ temps_json|safe }};
+      const humidity = {{ humidity_json|safe }};
+      const rain = {{ rain_json|safe }};
+
+      const chartConfig = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            padding: 12,
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            ticks: { color: 'rgba(255, 255, 255, 0.7)', font: { size: 11 } }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            ticks: { color: 'rgba(255, 255, 255, 0.7)', font: { size: 11 } }
+          }
+        }
+      };
+
+      new Chart(document.getElementById('tempChart'), {
+        type: 'line',
+        data: {
+          labels: times,
+          datasets: [{
+            label: 'Temperature (°C)',
+            data: temps,
+            borderColor: '#a8edea',
+            backgroundColor: 'rgba(168, 237, 234, 0.2)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#a8edea',
+            pointBorderWidth: 2
+          }]
+        },
+        options: chartConfig
+      });
+
+      new Chart(document.getElementById('humidityChart'), {
+        type: 'line',
+        data: {
+          labels: times,
+          datasets: [{
+            label: 'Humidity (%)',
+            data: humidity,
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#667eea',
+            pointBorderWidth: 2
+          }]
+        },
+        options: chartConfig
+      });
+
+      new Chart(document.getElementById('rainChart'), {
+        type: 'bar',
+        data: {
+          labels: times,
+          datasets: [{
+            label: 'Rainfall (mm)',
+            data: rain,
+            backgroundColor: 'rgba(168, 237, 234, 0.6)',
+            borderColor: '#a8edea',
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: chartConfig
+      });
+    {% endif %}
+  </script>
+</body>
+</html>

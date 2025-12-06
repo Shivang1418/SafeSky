@@ -1,0 +1,209 @@
+/* General body and header styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f7;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #2196F3;
+    color: white;
+    text-align: center;
+    font-size: 36px;
+    font-weight: 900;
+    padding: 25px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+/* Main container */
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Tracker Section */
+.tracker {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.member-card {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    width: 220px;
+    padding: 20px;
+    text-align: center;
+}
+
+.member-card h3 {
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+.status {
+    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+.status.granted { background-color: #4CAF50; }
+.status.pending { background-color: #FFC107; color: #333; }
+.status.denied { background-color: #F44336; }
+
+.track-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.track-btn:hover:not(:disabled) {
+    background-color: #1976D2;
+}
+
+.track-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Access Section */
+.access-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-bottom: 50px;
+}
+
+.access-section h2 {
+    margin-bottom: 15px;
+    font-size: 26px;
+    color: #2196F3;
+}
+
+.access-section input {
+    width: calc(50% - 10px);
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.access-section button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.access-section button:hover {
+    background-color: #388E3C;
+}
+
+/* Feedback Section */
+.feedback-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-bottom: 50px;
+}
+
+.feedback-section h2 {
+    margin-bottom: 15px;
+    font-size: 26px;
+    color: #FF9800;
+}
+
+.feedback-section input, 
+.feedback-section textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.feedback-section button {
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.feedback-section button:hover {
+    background-color: #F57C00;
+}
+
+/* FAQs Section */
+.faqs-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-bottom: 50px;
+}
+
+.faqs-section h2 {
+    margin-bottom: 15px;
+    font-size: 26px;
+    color: #9C27B0;
+}
+
+.faq {
+    margin-bottom: 15px;
+}
+
+.faq h3 {
+    cursor: pointer;
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.faq p {
+    display: none;
+    font-size: 16px;
+    color: #555;
+}
+
+/* About Section */
+.about-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-bottom: 50px;
+}
+
+.about-section h2 {
+    margin-bottom: 15px;
+    font-size: 26px;
+    color: #2196F3;
+}
+
+.about-section p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+}

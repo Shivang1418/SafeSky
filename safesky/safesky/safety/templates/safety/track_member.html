@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Track Member</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcUNdaZGH_lHPKIDPAcBekW6rZ4M-UOIw"></script>
+  <script>
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: { lat: 0, lng: 0 }
+      });
+      const marker = new google.maps.Marker({ map: map });
+
+      async function update() {
+        const response = await fetch("{% url 'safety:get_member_location' member.id %}");
+        const data = await response.json();
+
+        if (data.lat && data.lng) {
+          const pos = { lat: data.lat, lng: data.lng };
+          marker.setPosition(pos);
+          map.setCenter(pos);
+        }
+      }
+
+      update();
+      setInterval(update, 5000);
+    }
+
+    window.onload = initMap;
+  </script>
+</head>
+<body>
+  <h2>Tracking {{ member.name }}</h2>
+  <div id="map" style="height: 500px; width: 100%;"></div>
+</body>
+</html>
